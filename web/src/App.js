@@ -35,18 +35,13 @@ function App() {
   const renderChat = () => {
     console.log(state);
     console.log("chat:", chat);
-    // return chat.map(({ name, message }, index) => (
-    //   <div key={index}>
-    //     <h3>
-    //       {name}: <span>{message}</span>
-    //     </h3>
-    //   </div>
-    // ));
-    return (
-      <h3>
-        {chat.name}: {chat.message}
-      </h3>
-    );
+    return chat.map(({ name, message }, index) => (
+      <div key={index}>
+        <h3>
+          {name}: <span>{message}</span>
+        </h3>
+      </div>
+    ));
   };
 
   return (
@@ -76,7 +71,7 @@ function App() {
       <div className="render-chat">
         <h1>Chat Log</h1>
         {renderChat()}
-        This is where chat should render
+        This is where chat should render but something is off with useRef that is not loading the Chat
       </div>
     </div>
   );
