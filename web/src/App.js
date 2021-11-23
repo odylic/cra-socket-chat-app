@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from "react";
+import TextField from "@material-ui/core/TextField";
+import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
-import { TextField } from "@material-ui/core";
 import "./App.css";
-
-const socket = io.connect("http://localhost:4000");
 
 function App() {
   const [state, setState] = useState({ message: "", name: "" });
   const [chat, setChat] = useState([]);
 
+  const socketRef = useRef();
+
   useEffect(() => {
-    socket.on("message", ({ name, message }) => {
+    socketRef.current = io.connect("http://localhost:4000");
+    // should set the chat with the new message
+    socketRef.current.on("message", ({ name, message }) => {
       setChat([...chat, { name, message }]);
     });
+    return () => socketRef.current.disconnect();
   });
 
   const onTextChange = (e) => {
@@ -20,25 +23,34 @@ function App() {
   };
 
   const onMessageSubmit = (e) => {
-    e.preventDefault();
+    // deconstructs state.name and state.message
     const { name, message } = state;
-    socket.emit("message", { name, message });
+    // emit's the message to the websocket server
+    socketRef.current.emit("message", { name, message });
+    e.preventDefault();
+    // this is to reset state
     setState({ message: "", name });
   };
 
   const renderChat = () => {
-    return chat.map(({ name, message }, index) => (
-      <div key={index}>
-        <h3>
-          {name}: <span>{message} </span>
-        </h3>
-      </div>
-    ));
+    console.log(state);
+    console.log("chat:", chat);
+    // return chat.map(({ name, message }, index) => (
+    //   <div key={index}>
+    //     <h3>
+    //       {name}: <span>{message}</span>
+    //     </h3>
+    //   </div>
+    // ));
+    return (
+      <h3>
+        {chat.name}: {chat.message}
+      </h3>
+    );
   };
 
   return (
-    <div className="Card">
-      Test
+    <div className="card">
       <form onSubmit={onMessageSubmit}>
         <h1>Messenger</h1>
         <div className="name-field">
@@ -64,6 +76,7 @@ function App() {
       <div className="render-chat">
         <h1>Chat Log</h1>
         {renderChat()}
+        This is where chat should render
       </div>
     </div>
   );
