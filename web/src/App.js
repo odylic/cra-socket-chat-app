@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import { TextField } from "@material-ui/core";
-import "../App.scss";
+import "./App.css";
 
 const socket = io.connect("http://localhost:4000");
 
@@ -63,7 +63,7 @@ function App() {
       </form>
       <div className="render-chat">
         <h1>Chat Log</h1>
-        {renderchat()}
+        {renderChat()}
       </div>
     </div>
   );
